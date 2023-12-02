@@ -3,6 +3,7 @@ import express, {Express} from "express";
 const category = require("../routes/category");
 const brand = require("../routes/brand");
 const brochureType = require("../routes/brochureType");
+const brochure = require("../routes/brochure");
 const movies = require("../routes/Movie");
 const customers = require("../routes/Customers");
 const rentals = require("../routes/rentals");
@@ -18,6 +19,7 @@ module.exports = (app: Express) => {
   app.use("/api/category", category);
   app.use("/api/brand", brand);
   app.use("/api/brochure-type", brochureType);
+  app.use("/api/brochure", brochure);
   app.use("/api/movies", movies);
   app.use("/api/customers", customers);
   app.use("/api/rentals", rentals);

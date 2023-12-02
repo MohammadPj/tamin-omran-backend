@@ -2,13 +2,13 @@ import express, { Request, Response } from "express";
 const auth = require("../middleware/authorization");
 const admin = require("../middleware/admin");
 const checkLang = require("../middleware/language");
-import { Brand, validateBrand } from "../models/Brand";
+import { Brochure, validateBrochure } from "../models/Brochure";
 import {ELanguage} from "../types/common";
 
 const router = express.Router();
 
 // ----------------------------------  Get  --------------------------------------
-interface IBrandParams {
+interface IBrochureParams {
   title?: string;
   page?: number;
   limit?: number;
@@ -17,7 +17,7 @@ interface IBrandParams {
 }
 
 router.get("/", checkLang,async (req: Request<any>, res) => {
-  const { title, page = 1, limit = 100, sort, lang }: IBrandParams = req.query;
+  const { title, page = 1, limit = 100, sort, lang }: IBrochureParams = req.query;
 
   const query: any = {...req.query};
 
@@ -25,19 +25,19 @@ router.get("/", checkLang,async (req: Request<any>, res) => {
     query.title = new RegExp(title, "i");
   }
 
-  const brands = await Brand.find(query)
-    .sort(sort) // Default to sorting by title
+  const brochures = await Brochure.find(query)
+    .sort(sort)
     .skip((page - 1) * +limit)
     .limit(+limit);
-  res.send(brands);
+  res.send(brochures);
 });
 
 router.get("/:id", async (req, res) => {
-  const brand = await Brand.findById(req.params.id);
+  const brochure = await Brochure.findById(req.params.id);
 
-  if (!brand) return res.status(404).send("brand not found");
+  if (!brochure) return res.status(404).send("brochure not found");
 
-  res.send(brand);
+  res.send(brochure);
 });
 
 // ----------------------------------  Post  ----------------------------------------
@@ -45,41 +45,41 @@ router.post(
   "/",
   [auth, admin],
   async (req: Request<any>, res: Response<any>) => {
-    const { error } = validateBrand(req.body);
+    const { error } = validateBrochure(req.body);
 
     if (error) return res.status(400).send(error.details[0].message);
 
-    let brand = new Brand({ ...req.body });
-    brand = await brand.save();
+    let brochure = new Brochure({ ...req.body, type: req.body.typeId });
+    brochure = await brochure.save();
 
-    res.send(brand);
+    res.send(brochure);
   }
 );
 
 // ----------------------------------  Put  -----------------------------------------
 router.put("/:id", [auth, admin],async (req: Request<any>, res: Response<any>) => {
-  const { error } = validateBrand(req.body);
+  const { error } = validateBrochure(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  const brand = await Brand.findByIdAndUpdate(
+  const brochure = await Brochure.findByIdAndUpdate(
     req.params.id,
     { ...req.body },
     { new: true }
   );
-  // const brand = await Brand.findById(req.params.id)
-  if (!brand) return res.status(404).send("Brand not found");
+  // const brochure = await Brochure.findById(req.params.id)
+  if (!brochure) return res.status(404).send("Brochure not found");
 
-  const result = await brand.save();
+  const result = await brochure.save();
   res.send(result);
 });
 
 // ----------------------------------  Delete  -----------------------------------------
 router.delete("/:id", [auth, admin], async (req: any, res: any) => {
-  const brand = await Brand.findByIdAndRemove(req.params.id);
+  const brochure = await Brochure.findByIdAndRemove(req.params.id);
 
-  if (!brand) return res.status(404).send("Brand not found");
+  if (!brochure) return res.status(404).send("Brochure not found");
 
-  res.send(brand);
+  res.send(brochure);
 });
 
 module.exports = router;

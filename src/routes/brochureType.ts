@@ -9,7 +9,7 @@ const router = express.Router();
 
 // ----------------------------------  Get  --------------------------------------
 interface IBrochureTypeParams {
-  name?: string;
+  title?: string;
   page?: number;
   limit?: number;
   sort?: string;
@@ -17,16 +17,16 @@ interface IBrochureTypeParams {
 }
 
 router.get("/", checkLang,async (req: Request<any>, res) => {
-  const { name, page = 1, limit = 100, sort, lang }: IBrochureTypeParams = req.query;
+  const { title, page = 1, limit = 100, sort, lang }: IBrochureTypeParams = req.query;
 
   const query: any = {...req.query};
 
-  if (name) {
-    query.name = new RegExp(name, "i");
+  if (title) {
+    query.title = new RegExp(title, "i");
   }
 
   const brochureTypes = await BrochureType.find(query)
-    .sort(sort) // Default to sorting by name
+    .sort(sort) // Default to sorting by title
     .skip((page - 1) * +limit)
     .limit(+limit);
   res.send(brochureTypes);
