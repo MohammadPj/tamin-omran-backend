@@ -1,11 +1,14 @@
 import mongoose from "mongoose";
 import winston from "winston";
+const dbDebugger = require("debug")("app:db");
+import dotenv from 'dotenv'
 
 module.exports = () => {
-  mongoose
-    .connect("mongodb://127.0.0.1:27017/tamin-omran")
-    .then(() => {
-      winston.info('Connected to MongoDB...')
-    })
+  const env = dotenv.config().parsed
 
-}
+  mongoose.set("strictQuery", false);
+  mongoose.connect(env?.DATABASE_URL!).then(() => {
+    dbDebugger("connected to database...");
+    winston.info("Connected to MongoDB...");
+  });
+};

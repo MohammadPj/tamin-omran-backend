@@ -2,15 +2,11 @@ import jwt from "jsonwebtoken";
 const result = require("dotenv").config();
 
 const authorization = (req: any, res: any, next: any) => {
-  console.log("Authenticating ...");
-
-  const token = req.header("x-auth-token");
+  const token = req?.header("x-auth-token");
   if (!token) return res.status(401).send("Access denied, no token provided");
 
   try {
-    const decoded = jwt.verify(token,
-      result.parsed.SECRET_KEY
-    ); // set payload of token to req.user to use everywhere else
+    const decoded = jwt.verify(token, result.parsed.SECRET_KEY); // set payload of token to req.user to use everywhere else
     req.user = decoded;
     next();
   } catch (ex) {

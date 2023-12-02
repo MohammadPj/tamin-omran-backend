@@ -36,15 +36,15 @@ router.put("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         return res.status(400).send(error.details[0].message);
     const genre = yield Genre_1.Genre.findByIdAndUpdate(req.params.id, { name: req.body.name }, { new: true });
     if (!genre)
-        return res.status(404).send("Genre not found");
+        return res.status(404).send("Category not found");
     const result = yield genre.save();
     res.send(result);
 }));
 router.delete("/:id", (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const genre = yield Genre_1.Genre.findByIdAndRemove(req.params.id);
     if (!genre)
-        return res.status(404).send("Genre not found");
+        return res.status(404).send("Category not found");
     res.send(genre);
 }));
 module.exports = router;
-//# sourceMappingURL=Genre.js.map
+//# sourceMappingURL=Category.js.map

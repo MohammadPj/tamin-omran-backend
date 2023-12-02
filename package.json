@@ -23,6 +23,7 @@
     "fawn": "^2.1.5",
     "helmet": "^6.0.0",
     "joi": "^17.7.0",
+    "joi-password-complexity": "^5.2.0",
     "jsonwebtoken": "^9.0.2",
     "lodash": "^4.17.21",
     "mongoose": "^6.8.1",

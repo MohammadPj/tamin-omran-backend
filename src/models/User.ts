@@ -1,10 +1,11 @@
-import Joi from "joi";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
+import Joi from "joi";
+import passwordComplexity from "joi-password-complexity";
 const result = require("dotenv").config();
 
 const userSchema = new mongoose.Schema({
-  name: { type: String, required: true, minLength: 5, maxLength: 25 },
+  name: { type: String, minLength: 3, maxLength: 25 },
   email: {
     type: String,
     required: true,
@@ -29,9 +30,9 @@ const User = mongoose.model("User", userSchema);
 
 const validateUser = (user: any) => {
   const schema = Joi.object({
-    name: Joi.string().required().min(5).max(25),
+    name: Joi.string().required().min(3).max(25),
     email: Joi.string().required().min(5).max(255).email(),
-    password: Joi.string().required().min(5).max(1024),
+    password: passwordComplexity({ min: 6, max: 20, upperCase: 1, numeric: 1 }),
   });
 
   return schema.validate(user);
