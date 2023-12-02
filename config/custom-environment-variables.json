@@ -1,0 +1,4 @@
+{
+  "_comment": "// vidly_jwtPrivateKey is an environment property that should set - $env:vidly_jwtPrivateKey = 'value'",
+  "jwtPrivateKey": "vidly_jwtPrivateKey"
+}
