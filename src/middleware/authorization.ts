@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken";
-const config = require("config");
+const result = require("dotenv").config();
 
 const authorization = (req: any, res: any, next: any) => {
   console.log("Authenticating ...");
@@ -9,8 +9,7 @@ const authorization = (req: any, res: any, next: any) => {
 
   try {
     const decoded = jwt.verify(token,
-      // config.get("jwtPrivateKey")
-      "PrivateKey_ShouldSet"
+      result.parsed.SECRET_KEY
     ); // set payload of token to req.user to use everywhere else
     req.user = decoded;
     next();

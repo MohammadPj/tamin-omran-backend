@@ -1,7 +1,7 @@
 import Joi from "joi";
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
-const config = require("config");
+const result = require("dotenv").config();
 
 const userSchema = new mongoose.Schema({
   name: { type: String, required: true, minLength: 5, maxLength: 25 },
@@ -19,8 +19,7 @@ const userSchema = new mongoose.Schema({
 userSchema.methods.generateAuthToken = function () {
   const token = jwt.sign(
     { _id: this._id, isAdmin: this.isAdmin }, // payload of jwt
-    // config.get("jwtPrivateKey") // private key
-    "PrivateKey_ShouldSet"
+    result.parsed.SECRET_KEY // private key
   );
 
   return token;
