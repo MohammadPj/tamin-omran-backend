@@ -29,8 +29,8 @@ router.get("/", checkLang, async (req: Request<any>, res) => {
     .sort(sort)
     .skip((page - 1) * +limit)
     .limit(+limit)
-    .populate("type", "title")
-    .select("title lang type");
+    .populate("category")
+    .populate("brand")
   res.send(products);
 });
 
