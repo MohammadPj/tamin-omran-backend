@@ -2,7 +2,11 @@ import express, { Request, Response } from "express";
 const auth = require("../middleware/authorization");
 const admin = require("../middleware/admin");
 const checkLang = require("../middleware/language");
-import { Brochure, validateBrochure } from "../models/Brochure";
+import {
+  Brochure,
+  validateBrochure,
+  validateEditeBrochure,
+} from "../models/Brochure";
 import { ELanguage } from "../types/common";
 
 const router = express.Router();
@@ -29,14 +33,14 @@ router.get("/", checkLang, async (req: Request<any>, res) => {
     .sort(sort)
     .skip((page - 1) * +limit)
     .limit(+limit)
-    .populate("type", "title")
-    .select("title lang type");
+    .populate("brochureType");
+
   res.send(brochures);
 });
 
 router.get("/:id", async (req, res) => {
   const brochure = await Brochure.findById(req.params.id).populate(
-    "type",
+    "brochureType",
     "title"
   );
 
@@ -54,27 +58,27 @@ router.post(
 
     if (error) return res.status(400).send(error.details[0].message);
 
-    let brochure = new Brochure({ ...req.body, type: req.body.typeId });
+    let brochure = new Brochure({ ...req.body, brochureType: req.body.typeId });
     brochure = await brochure.save();
 
     res.send(brochure);
   }
 );
 
-// ----------------------------------  Put  -----------------------------------------
+// ----------------------------------  Put  -----------------------------------------------
 router.put(
   "/:id",
   [auth, admin],
   async (req: Request<any>, res: Response<any>) => {
-    const { error } = validateBrochure(req.body);
+    const { error } = validateEditeBrochure(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
     const brochure = await Brochure.findByIdAndUpdate(
       req.params.id,
-      { ...req.body, type: req.body.typeId },
+      { ...req.body, brochureType: req.body.typeId },
       { new: true }
     );
-    // const brochure = await Brochure.findById(req.params.id)
+
     if (!brochure) return res.status(404).send("Brochure not found");
 
     const result = await brochure.save();

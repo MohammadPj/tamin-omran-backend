@@ -20,7 +20,7 @@ export interface IProduct extends Document{
 }
 
 const productSchema = new Schema<IProduct>({
-  title: { type: String, minLength: 3, maxLength: 25 },
+  title: { type: String, minLength: 3, maxLength: 25, required: true },
   lang: { type: String, enum: ELanguage, required: true },
   category: {type: mongoose.Schema.Types.ObjectId, ref: 'Category'},
   brand: {type: mongoose.Schema.Types.ObjectId, ref: 'Brand'},
@@ -36,13 +36,14 @@ const Product = mongoose.model<IProduct>("Product", productSchema);
 
 const validateProduct = (product: any) => {
   const schema = Joi.object({
-    title: Joi.string().required().min(3),
-    lang: Joi.string().required(),
+    title: Joi.string().min(3),
+    lang: Joi.string(),
     brandId: Joi.string(),
     categoryId: Joi.string(),
     description: Joi.string(),
     technicalNumber: Joi.string(),
     engineNumber: Joi.string(),
+    review: Joi.string(),
     isAvailable: Joi.boolean(),
   });
   return schema.validate(product);

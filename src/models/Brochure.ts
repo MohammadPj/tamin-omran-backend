@@ -6,7 +6,7 @@ import {IBrochureType} from "./BrochureType";
 export interface IBrochure extends Document{
   title: string;
   lang: ELanguage;
-  type: IBrochureType
+  brochureType: IBrochureType
   createdAt: Date;
   updatedAt: Date;
   file: string
@@ -15,7 +15,7 @@ export interface IBrochure extends Document{
 const brochureSchema = new Schema<IBrochure>({
   title: { type: String, minLength: 3, maxLength: 25 },
   lang: { type: String, enum: ELanguage, required: true },
-  type: {type: mongoose.Schema.Types.ObjectId, ref: 'BrochureType'},
+  brochureType: {type: mongoose.Schema.Types.ObjectId, ref: 'BrochureType'},
   file: { type: String, required: true },
 }, {timestamps: true});
 
@@ -25,10 +25,20 @@ const validateBrochure = (brochure: any) => {
   const schema = Joi.object({
     title: Joi.string().required().min(3),
     lang: Joi.string().required(),
-    typeId: Joi.string().required(),
+    brochureTypeId: Joi.string().required(),
     file: Joi.string().required(),
   });
   return schema.validate(brochure);
 };
 
-export { Brochure, validateBrochure };
+const validateEditeBrochure = (brochure: any) => {
+  const schema = Joi.object({
+    title: Joi.string().min(3),
+    lang: Joi.string(),
+    brochureTypeId: Joi.string(),
+    file: Joi.string(),
+  });
+  return schema.validate(brochure);
+};
+
+export { Brochure, validateBrochure, validateEditeBrochure };

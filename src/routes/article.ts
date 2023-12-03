@@ -2,14 +2,13 @@ import express, { Request, Response } from "express";
 const auth = require("../middleware/authorization");
 const admin = require("../middleware/admin");
 const checkLang = require("../middleware/language");
-import { BrochureType, validateBrochureType } from "../models/BrochureType";
+import { Article, validateArticle } from "../models/Article";
 import {ELanguage} from "../types/common";
-import {Brochure} from "../models/Brochure";
 
 const router = express.Router();
 
 // ----------------------------------  Get  --------------------------------------
-interface IBrochureTypeParams {
+interface IArticleParams {
   title?: string;
   page?: number;
   limit?: number;
@@ -18,7 +17,7 @@ interface IBrochureTypeParams {
 }
 
 router.get("/", checkLang,async (req: Request<any>, res) => {
-  const { title, page = 1, limit = 100, sort, lang }: IBrochureTypeParams = req.query;
+  const { title, page = 1, limit = 100, sort, lang }: IArticleParams = req.query;
 
   const query: any = {...req.query};
 
@@ -26,19 +25,19 @@ router.get("/", checkLang,async (req: Request<any>, res) => {
     query.title = new RegExp(title, "i");
   }
 
-  const brochureTypes = await BrochureType.find(query)
+  const articles = await Article.find(query)
     .sort(sort) // Default to sorting by title
     .skip((page - 1) * +limit)
     .limit(+limit);
-  res.send(brochureTypes);
+  res.send(articles);
 });
 
 router.get("/:id", async (req, res) => {
-  const brochureTyp = await BrochureType.findById(req.params.id);
+  const article = await Article.findById(req.params.id);
 
-  if (!brochureTyp) return res.status(404).send("brochureTyp not found");
+  if (!article) return res.status(404).send("article not found");
 
-  res.send(brochureTyp);
+  res.send(article);
 });
 
 // ----------------------------------  Post  ----------------------------------------
@@ -46,42 +45,41 @@ router.post(
   "/",
   [auth, admin],
   async (req: Request<any>, res: Response<any>) => {
-    const { error } = validateBrochureType(req.body);
+    const { error } = validateArticle(req.body);
 
     if (error) return res.status(400).send(error.details[0].message);
 
-    let brochureTyp = new BrochureType({ ...req.body });
-    brochureTyp = await brochureTyp.save();
+    let article = new Article({ ...req.body });
+    article = await article.save();
 
-    res.send(brochureTyp);
+    res.send(article);
   }
 );
 
 // ----------------------------------  Put  -----------------------------------------
 router.put("/:id", [auth, admin],async (req: Request<any>, res: Response<any>) => {
-  const { error } = validateBrochureType(req.body);
+  const { error } = validateArticle(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  const brochureTyp = await BrochureType.findByIdAndUpdate(
+  const article = await Article.findByIdAndUpdate(
     req.params.id,
     { ...req.body },
     { new: true }
   );
+  // const article = await Article.findById(req.params.id)
+  if (!article) return res.status(404).send("Article not found");
 
-  if (!brochureTyp) return res.status(404).send("BrochureType not found");
-
-  const result = await brochureTyp.save();
+  const result = await article.save();
   res.send(result);
 });
 
 // ----------------------------------  Delete  -----------------------------------------
 router.delete("/:id", [auth, admin], async (req: any, res: any) => {
-  const brochures = await Brochure.find({})
-  const brochureTyp = await BrochureType.findByIdAndRemove(req.params.id);
+  const article = await Article.findByIdAndRemove(req.params.id);
 
-  if (!brochureTyp) return res.status(404).send("BrochureType not found");
+  if (!article) return res.status(404).send("Article not found");
 
-  res.send(brochureTyp);
+  res.send(article);
 });
 
 module.exports = router;

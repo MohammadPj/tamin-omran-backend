@@ -7,7 +7,7 @@ import { ELanguage } from "../types/common";
 
 const router = express.Router();
 
-// ----------------------------------  Get  --------------------------------------
+// ----------------------------------  Get  -----------------------------------------
 interface IProductParams {
   title?: string;
   page?: number;
@@ -30,15 +30,14 @@ router.get("/", checkLang, async (req: Request<any>, res) => {
     .skip((page - 1) * +limit)
     .limit(+limit)
     .populate("category")
-    .populate("brand")
+    .populate("brand");
   res.send(products);
 });
 
 router.get("/:id", async (req, res) => {
-  const product = await Product.findById(req.params.id).populate(
-    "type",
-    "title"
-  );
+  const product = await Product.findById(req.params.id)
+    .populate("category")
+    .populate("brand");
 
   if (!product) return res.status(404).send("product not found");
 
@@ -59,6 +58,9 @@ router.post(
       category: req.body.categoryId,
       brand: req.body.brandId,
     });
+
+    product = await product.populate("category brand");
+
     product = await product.save();
 
     res.send(product);
@@ -77,7 +79,8 @@ router.put(
       req.params.id,
       { ...req.body, category: req.body.categoryId, brand: req.body.brandId },
       { new: true }
-    );
+    ).populate("category brand");
+
     // const product = await Product.findById(req.params.id)
     if (!product) return res.status(404).send("Product not found");
 
@@ -86,9 +89,9 @@ router.put(
   }
 );
 
-// ----------------------------------  Delete  -----------------------------------------
+// ----------------------------------  Delete  --------------------------------------
 router.delete("/:id", [auth, admin], async (req: any, res: any) => {
-  const product = await Product.findByIdAndRemove(req.params.id);
+  const product = await Product.findByIdAndRemove(req.params.id).populate("category brand");
 
   if (!product) return res.status(404).send("Product not found");
 
