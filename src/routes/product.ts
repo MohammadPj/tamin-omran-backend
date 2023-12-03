@@ -2,13 +2,13 @@ import express, { Request, Response } from "express";
 const auth = require("../middleware/authorization");
 const admin = require("../middleware/admin");
 const checkLang = require("../middleware/language");
-import { Brochure, validateBrochure } from "../models/Brochure";
+import { IProduct, Product, validateProduct } from "../models/Product";
 import { ELanguage } from "../types/common";
 
 const router = express.Router();
 
 // ----------------------------------  Get  --------------------------------------
-interface IBrochureParams {
+interface IProductParams {
   title?: string;
   page?: number;
   limit?: number;
@@ -17,7 +17,7 @@ interface IBrochureParams {
 }
 
 router.get("/", checkLang, async (req: Request<any>, res) => {
-  const { title, page = 1, limit = 100, sort }: IBrochureParams = req.query;
+  const { title, page = 1, limit = 100, sort }: IProductParams = req.query;
 
   const query: any = { ...req.query };
 
@@ -25,24 +25,24 @@ router.get("/", checkLang, async (req: Request<any>, res) => {
     query.title = new RegExp(title, "i");
   }
 
-  const brochures = await Brochure.find(query)
+  const products = await Product.find(query)
     .sort(sort)
     .skip((page - 1) * +limit)
     .limit(+limit)
     .populate("type", "title")
     .select("title lang type");
-  res.send(brochures);
+  res.send(products);
 });
 
 router.get("/:id", async (req, res) => {
-  const brochure = await Brochure.findById(req.params.id).populate(
+  const product = await Product.findById(req.params.id).populate(
     "type",
     "title"
   );
 
-  if (!brochure) return res.status(404).send("brochure not found");
+  if (!product) return res.status(404).send("product not found");
 
-  res.send(brochure);
+  res.send(product);
 });
 
 // ----------------------------------  Post  ----------------------------------------
@@ -50,14 +50,18 @@ router.post(
   "/",
   [auth, admin],
   async (req: Request<any>, res: Response<any>) => {
-    const { error } = validateBrochure(req.body);
+    const { error } = validateProduct(req.body);
 
     if (error) return res.status(400).send(error.details[0].message);
 
-    let brochure = new Brochure({ ...req.body, type: req.body.typeId });
-    brochure = await brochure.save();
+    let product = new Product({
+      ...req.body,
+      category: req.body.categoryId,
+      brand: req.body.brandId,
+    });
+    product = await product.save();
 
-    res.send(brochure);
+    res.send(product);
   }
 );
 
@@ -66,29 +70,29 @@ router.put(
   "/:id",
   [auth, admin],
   async (req: Request<any>, res: Response<any>) => {
-    const { error } = validateBrochure(req.body);
+    const { error } = validateProduct(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    const brochure = await Brochure.findByIdAndUpdate(
+    const product = await Product.findByIdAndUpdate(
       req.params.id,
-      { ...req.body, type: req.body.typeId },
+      { ...req.body, category: req.body.categoryId, brand: req.body.brandId },
       { new: true }
     );
-    // const brochure = await Brochure.findById(req.params.id)
-    if (!brochure) return res.status(404).send("Brochure not found");
+    // const product = await Product.findById(req.params.id)
+    if (!product) return res.status(404).send("Product not found");
 
-    const result = await brochure.save();
+    const result = await product.save();
     res.send(result);
   }
 );
 
 // ----------------------------------  Delete  -----------------------------------------
 router.delete("/:id", [auth, admin], async (req: any, res: any) => {
-  const brochure = await Brochure.findByIdAndRemove(req.params.id);
+  const product = await Product.findByIdAndRemove(req.params.id);
 
-  if (!brochure) return res.status(404).send("Brochure not found");
+  if (!product) return res.status(404).send("Product not found");
 
-  res.send(brochure);
+  res.send(product);
 });
 
 module.exports = router;
