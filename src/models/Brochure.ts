@@ -7,9 +7,9 @@ export interface IBrochure extends Document{
   title: string;
   lang: ELanguage;
   brochureType: IBrochureType
+  file: string
   createdAt: Date;
   updatedAt: Date;
-  file: string
 }
 
 const brochureSchema = new Schema<IBrochure>({

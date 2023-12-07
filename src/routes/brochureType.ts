@@ -17,8 +17,8 @@ interface IBrochureTypeParams {
   lang?: ELanguage
 }
 
-router.get("/", checkLang,async (req: Request<any>, res) => {
-  const { title, page = 1, limit = 100, sort, lang }: IBrochureTypeParams = req.query;
+router.get("/", checkLang, async (req: Request<any>, res) => {
+  const { title, page = 1, limit = 100, sort }: IBrochureTypeParams = req.query;
 
   const query: any = {...req.query};
 

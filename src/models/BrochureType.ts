@@ -19,7 +19,7 @@ const BrochureType = mongoose.model<IBrochureType>("BrochureType", brochureTypeS
 const validateBrochureType = (brochureType: any) => {
   const schema = Joi.object({
     title: Joi.string().required().min(3),
-    lang: Joi.string().required()
+    lang: Joi.string()
   });
   return schema.validate(brochureType);
 };
