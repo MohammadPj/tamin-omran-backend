@@ -76,7 +76,10 @@ router.put("/:id", [auth, admin],async (req: Request<any>, res: Response<any>) =
 
 // ----------------------------------  Delete  -----------------------------------------
 router.delete("/:id", [auth, admin], async (req: any, res: any) => {
-  const brochures = await Brochure.find({})
+  const brochure = await Brochure.findOne({brochureType: req.params.id})
+
+  if (brochure) return res.status(500).send("از این دسته بندی استفاده شده است");
+
   const brochureTyp = await BrochureType.findByIdAndRemove(req.params.id);
 
   if (!brochureTyp) return res.status(404).send("BrochureType not found");

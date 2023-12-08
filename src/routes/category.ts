@@ -4,6 +4,7 @@ const admin = require("../middleware/admin");
 const checkLang = require("../middleware/language");
 import { Category, validateCategory } from "../models/Category";
 import {ELanguage} from "../types/common";
+import {Product} from "../models/Product";
 
 const router = express.Router();
 
@@ -75,6 +76,10 @@ router.put("/:id", [auth, admin],async (req: Request<any>, res: Response<any>) =
 
 // ----------------------------------  Delete  -----------------------------------------
 router.delete("/:id", [auth, admin], async (req: any, res: any) => {
+  const product = await Product.findOne({category: req.params.id})
+
+  if (product) return res.status(500).send("از این دسته بندی استفاده شده است");
+
   const category = await Category.findByIdAndRemove(req.params.id);
 
   if (!category) return res.status(404).send("Category not found");

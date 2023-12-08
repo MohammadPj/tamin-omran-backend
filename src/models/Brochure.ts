@@ -16,7 +16,7 @@ const brochureSchema = new Schema<IBrochure>({
   title: { type: String, minLength: 3, maxLength: 25 },
   lang: { type: String, enum: ELanguage, required: true },
   brochureType: {type: mongoose.Schema.Types.ObjectId, ref: 'BrochureType'},
-  file: { type: String, required: true },
+  file: { type: String },
 }, {timestamps: true});
 
 const Brochure = mongoose.model<IBrochure>("Brochure", brochureSchema);
@@ -26,7 +26,7 @@ const validateBrochure = (brochure: any) => {
     title: Joi.string().required().min(3),
     lang: Joi.string().required(),
     brochureTypeId: Joi.string().required(),
-    file: Joi.string().required(),
+    file: Joi.string(),
   });
   return schema.validate(brochure);
 };

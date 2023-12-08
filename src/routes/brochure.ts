@@ -58,7 +58,7 @@ router.post(
 
     if (error) return res.status(400).send(error.details[0].message);
 
-    let brochure = new Brochure({ ...req.body, brochureType: req.body.typeId });
+    let brochure = new Brochure({ ...req.body, brochureType: req.body.brochureTypeId });
     brochure = await brochure.save();
 
     res.send(brochure);
@@ -75,7 +75,7 @@ router.put(
 
     const brochure = await Brochure.findByIdAndUpdate(
       req.params.id,
-      { ...req.body, brochureType: req.body.typeId },
+      { ...req.body, brochureType: req.body.brochureTypeId },
       { new: true }
     );
 

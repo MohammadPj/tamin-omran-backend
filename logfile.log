@@ -307,3 +307,22 @@
 {"level":"info","message":"Connected to MongoDB..."}
 {"level":"info","message":"listening to port 4000"}
 {"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"_message":"Product validation failed","errors":{"review":{"kind":"required","message":"Path `review` is required.","name":"ValidatorError","path":"review","properties":{"message":"Path `review` is required.","path":"review","type":"required"}}},"level":"error","message":"Product validation failed: review: Path `review` is required. Product validation failed: review: Path `review` is required.","stack":"ValidationError: Product validation failed: review: Path `review` is required.\n    at model.Document.invalidate (F:\\Developer\\Code\\Projects\\tamin-omran\\back-end\\node_modules\\mongoose\\lib\\document.js:3123:32)\n    at F:\\Developer\\Code\\Projects\\tamin-omran\\back-end\\node_modules\\mongoose\\lib\\document.js:2911:17\n    at F:\\Developer\\Code\\Projects\\tamin-omran\\back-end\\node_modules\\mongoose\\lib\\schematype.js:1349:9\n    at processTicksAndRejections (node:internal/process/task_queues:77:11)"}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}

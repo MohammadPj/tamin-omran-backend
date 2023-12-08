@@ -4,6 +4,8 @@ const admin = require("../middleware/admin");
 const checkLang = require("../middleware/language");
 import { Brand, validateBrand } from "../models/Brand";
 import {ELanguage} from "../types/common";
+import {Brochure} from "../models/Brochure";
+import {Product} from "../models/Product";
 
 const router = express.Router();
 
@@ -75,6 +77,11 @@ router.put("/:id", [auth, admin],async (req: Request<any>, res: Response<any>) =
 
 // ----------------------------------  Delete  -----------------------------------------
 router.delete("/:id", [auth, admin], async (req: any, res: any) => {
+
+  const product = await Product.findOne({brand: req.params.id})
+
+  if (product) return res.status(500).send("از این برند استفاده شده است");
+
   const brand = await Brand.findByIdAndRemove(req.params.id);
 
   if (!brand) return res.status(404).send("Brand not found");
