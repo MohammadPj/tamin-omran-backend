@@ -6,6 +6,7 @@ const startupDebugger = require("debug")("app:startup");
 module.exports = (app: Express) => {
   app.use(express.urlencoded({ extended: true })); //key=value&key=value
   app.use(express.static("public"));
+  app.use(express.static("uploads"));
   app.use(helmet());
 
   if (app.get("env") === "development") {

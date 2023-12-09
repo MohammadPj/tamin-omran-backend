@@ -9,6 +9,19 @@ import {
 } from "../models/Brochure";
 import { ELanguage } from "../types/common";
 
+const multer  = require('multer')
+
+const storage = multer.diskStorage({
+  destination: (req: any, file: any, cb: any) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req: any, file: any, cb: any) => {
+    cb(null, Date.now() + '-' + file.originalname);
+  }
+});
+
+const upload = multer({ storage: storage })
+
 const router = express.Router();
 
 // ----------------------------------  Get  --------------------------------------
@@ -50,20 +63,30 @@ router.get("/:id", async (req, res) => {
 });
 
 // ----------------------------------  Post  ----------------------------------------
-router.post(
-  "/",
-  [auth, admin],
-  async (req: Request<any>, res: Response<any>) => {
-    const { error } = validateBrochure(req.body);
 
-    if (error) return res.status(400).send(error.details[0].message);
+router.post("/", upload.single("file"), (req, res, next) => {
 
-    let brochure = new Brochure({ ...req.body, brochureType: req.body.brochureTypeId });
-    brochure = await brochure.save();
+  console.log('body', req.body)
+  // @ts-ignore
+  console.log('file', req.file)
 
-    res.send(brochure);
-  }
-);
+  res.send("success")
+})
+
+// router.post(
+//   "/",
+//   [auth, admin],
+//   async (req: Request<any>, res: Response<any>) => {
+//     const { error } = validateBrochure(req.body);
+//
+//     if (error) return res.status(400).send(error.details[0].message);
+//
+//     let brochure = new Brochure({ ...req.body, brochureType: req.body.brochureTypeId });
+//     brochure = await brochure.save();
+//
+//     res.send(brochure);
+//   }
+// );
 
 // ----------------------------------  Put  -----------------------------------------------
 router.put(
