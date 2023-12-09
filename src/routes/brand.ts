@@ -19,9 +19,9 @@ interface IBrandParams {
 }
 
 router.get("/", checkLang,async (req: Request<any>, res) => {
-  const { title, page = 1, limit = 100, sort, lang }: IBrandParams = req.query;
+  const { title, page = 1, limit = 100, sort, ...rest }: IBrandParams = req.query;
 
-  const query: any = {...req.query};
+  const query: any = {...rest};
 
   if (title) {
     query.title = new RegExp(title, "i");

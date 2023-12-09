@@ -17,9 +17,9 @@ interface IArticleParams {
 }
 
 router.get("/", checkLang,async (req: Request<any>, res) => {
-  const { title, page = 1, limit = 100, sort, lang }: IArticleParams = req.query;
+  const { title, page = 1, limit = 100, sort, ...rest }: IArticleParams = req.query;
 
-  const query: any = {...req.query};
+  const query: any = {...rest};
 
   if (title) {
     query.title = new RegExp(title, "i");

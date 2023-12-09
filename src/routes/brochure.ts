@@ -21,9 +21,9 @@ interface IBrochureParams {
 }
 
 router.get("/", checkLang, async (req: Request<any>, res) => {
-  const { title, page = 1, limit = 100, sort }: IBrochureParams = req.query;
+  const { title, page = 1, limit = 100, sort, ...rest }: IBrochureParams = req.query;
 
-  const query: any = { ...req.query };
+  const query: any = { ...rest };
 
   if (title) {
     query.title = new RegExp(title, "i");
