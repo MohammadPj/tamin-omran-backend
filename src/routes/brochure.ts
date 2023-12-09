@@ -64,29 +64,29 @@ router.get("/:id", async (req, res) => {
 
 // ----------------------------------  Post  ----------------------------------------
 
-router.post("/", upload.single("file"), (req, res, next) => {
-
-  console.log('body', req.body)
-  // @ts-ignore
-  console.log('file', req.file)
-
-  res.send("success")
-})
-
-// router.post(
-//   "/",
-//   [auth, admin],
-//   async (req: Request<any>, res: Response<any>) => {
-//     const { error } = validateBrochure(req.body);
+// router.post("/", upload.single("file"), (req, res, next) => {
 //
-//     if (error) return res.status(400).send(error.details[0].message);
+//   console.log('body', req.body)
+//   // @ts-ignore
+//   console.log('file', req.file)
 //
-//     let brochure = new Brochure({ ...req.body, brochureType: req.body.brochureTypeId });
-//     brochure = await brochure.save();
-//
-//     res.send(brochure);
-//   }
-// );
+//   res.send("success")
+// })
+
+router.post(
+  "/",
+  [auth, admin],
+  async (req: Request<any>, res: Response<any>) => {
+    const { error } = validateBrochure(req.body);
+
+    if (error) return res.status(400).send(error.details[0].message);
+
+    let brochure = new Brochure({ ...req.body, brochureType: req.body.brochureTypeId });
+    brochure = await brochure.save();
+
+    res.send(brochure);
+  }
+);
 
 // ----------------------------------  Put  -----------------------------------------------
 router.put(
