@@ -7,7 +7,7 @@ export interface IBrochure extends Document{
   title: string;
   lang: ELanguage;
   brochureType: IBrochureType
-  file: string
+  file: {}
   createdAt: Date;
   updatedAt: Date;
 }
@@ -16,7 +16,7 @@ const brochureSchema = new Schema<IBrochure>({
   title: { type: String, minLength: 3, maxLength: 25 },
   lang: { type: String, enum: ELanguage, required: true },
   brochureType: {type: mongoose.Schema.Types.ObjectId, ref: 'BrochureType'},
-  file: { type: String },
+  file: { type: Object, required: true },
 }, {timestamps: true});
 
 const Brochure = mongoose.model<IBrochure>("Brochure", brochureSchema);
