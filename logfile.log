@@ -424,3 +424,35 @@
 {"level":"info","message":"Connected to MongoDB..."}
 {"level":"info","message":"listening to port 4000"}
 {"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"error","message":"secretOrPrivateKey must have a value secretOrPrivateKey must have a value","stack":"Error: secretOrPrivateKey must have a value\n    at Object.module.exports [as sign] (C:\\Users\\Windows 10\\Documents\\Mohammad\\Code\\Practice\\Front-End\\Next13\\tamin-omran\\tamin-omran-backend\\node_modules\\jsonwebtoken\\sign.js:111:20)\n    at model.userSchema.methods.generateAuthToken (C:\\Users\\Windows 10\\Documents\\Mohammad\\Code\\Practice\\Front-End\\Next13\\tamin-omran\\tamin-omran-backend\\src\\models\\User.ts:21:21)\n    at C:\\Users\\Windows 10\\Documents\\Mohammad\\Code\\Practice\\Front-End\\Next13\\tamin-omran\\tamin-omran-backend\\src\\routes\\register.ts:26:22\n    at Generator.next (<anonymous>)\n    at fulfilled (C:\\Users\\Windows 10\\Documents\\Mohammad\\Code\\Practice\\Front-End\\Next13\\tamin-omran\\tamin-omran-backend\\src\\routes\\register.ts:5:58)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}
+{"level":"error","message":"secretOrPrivateKey must have a value secretOrPrivateKey must have a value","stack":"Error: secretOrPrivateKey must have a value\n    at Object.module.exports [as sign] (C:\\Users\\Windows 10\\Documents\\Mohammad\\Code\\Practice\\Front-End\\Next13\\tamin-omran\\tamin-omran-backend\\node_modules\\jsonwebtoken\\sign.js:111:20)\n    at model.userSchema.methods.generateAuthToken (C:\\Users\\Windows 10\\Documents\\Mohammad\\Code\\Practice\\Front-End\\Next13\\tamin-omran\\tamin-omran-backend\\src\\models\\User.ts:21:21)\n    at C:\\Users\\Windows 10\\Documents\\Mohammad\\Code\\Practice\\Front-End\\Next13\\tamin-omran\\tamin-omran-backend\\src\\routes\\register.ts:26:22\n    at Generator.next (<anonymous>)\n    at fulfilled (C:\\Users\\Windows 10\\Documents\\Mohammad\\Code\\Practice\\Front-End\\Next13\\tamin-omran\\tamin-omran-backend\\src\\routes\\register.ts:5:58)\n    at processTicksAndRejections (node:internal/process/task_queues:96:5)"}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}

@@ -72,12 +72,8 @@ router.get("/:id", async (req, res) => {
 
 router.post(
   "/",
-  [auth, admin, upload.single("file")],
+  [auth, admin],
   async (req: Request<any>, res: Response<any>) => {
-
-    // @ts-ignore
-    const file = req.file
-
     const { error } = validateBrochure(req.body);
 
     if (error) return res.status(400).send(error.details[0].message);
@@ -85,10 +81,6 @@ router.post(
     let brochure = new Brochure({
       ...req.body,
       brochureType: req.body.brochureTypeId,
-      file: {
-        name: file.originalname,
-        id: file.filename
-      }
     });
 
     brochure = await brochure.save();

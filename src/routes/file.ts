@@ -1,29 +1,25 @@
 import express, { Request, Response } from "express";
+import dotenv from 'dotenv'
 
 const auth = require("../middleware/authorization");
 const admin = require("../middleware/admin");
-import { File, validateFile } from "../models/File";
-import { Product } from "../models/Product";
-
-const multer  = require('multer')
+import { File } from "../models/File";
+const multer = require("multer");
 
 const storage = multer.diskStorage({
   destination: (req: any, file: any, cb: any) => {
-    cb(null, 'uploads/');
+    cb(null, "uploads/");
   },
   filename: (req: any, file: any, cb: any) => {
-    cb(null, Date.now() + '-' + file.originalname);
-  }
+    cb(null, Date.now() + "-" + file.originalname);
+  },
 });
 
-const upload = multer({ storage: storage })
+const upload = multer({ storage: storage });
 
 const router = express.Router();
 
 // ----------------------------------  Get  --------------------------------------
-interface IFileParams {
-
-}
 
 router.get("/", async (req: Request<any>, res) => {
   const files = await File.find();
@@ -42,16 +38,24 @@ router.get("/:id", async (req, res) => {
 // ----------------------------------  Post  ----------------------------------------
 router.post(
   "/",
-  [auth, admin, upload.single('file')],
+  [auth, admin, upload.single("file")],
   async (req: Request<any>, res: Response<any>) => {
-    // const { error } = validateFile(req.body);
-    //
-    // if (error) return res.status(400).send(error.details[0].message);
+    // @ts-ignore
+    const reqFile = req.file;
 
-    let file = new File({ ...req.body });
+    const env = dotenv.config().parsed
+
+    let file = new File({
+      link: env?.BASE_URL + reqFile?.filename,
+      name: reqFile?.originalname,
+      type: reqFile?.mimetype,
+      size: reqFile?.size,
+      destination: reqFile?.destination,
+    });
+
     file = await file.save();
 
-    res.send(file);
+    res.send({link: file.link});
   }
 );
 
@@ -60,9 +64,6 @@ router.put(
   "/:id",
   [auth, admin],
   async (req: Request<any>, res: Response<any>) => {
-    const { error } = validateFile(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
-
     const file = await File.findByIdAndUpdate(
       req.params.id,
       { ...req.body },

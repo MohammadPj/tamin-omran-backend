@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt");
 
 const router = express.Router();
 
-// ----------------------------------  Get  --------------------------------------
+// ----------------------------------  Post  --------------------------------------
 router.post("/", async (req, res) => {
   const { error } = validateUser(req.body);
 
@@ -25,7 +25,7 @@ router.post("/", async (req, res) => {
   // @ts-ignore
   const token = user.generateAuthToken()
 
-  res.header('x-auth-token', token).send(lodash.pick(user, ["name", "email"]));
+  res.send({token, ...lodash.pick(user, ["name", "email"])});
 });
 
 module.exports = router;
