@@ -5,10 +5,11 @@ const checkLang = require("../middleware/language");
 import { Article, validateArticle } from "../models/Article";
 import { ELanguage } from "../types/common";
 import dotenv from "dotenv";
+import { Brochure } from "../models/Brochure";
 
-const fs = require('fs')
-const { promisify } = require('util')
-const unlinkAsync = promisify(fs.unlink)
+const fs = require("fs");
+const { promisify } = require("util");
+const unlinkAsync = promisify(fs.unlink);
 
 const multer = require("multer");
 
@@ -68,18 +69,14 @@ router.get("/:id", async (req, res) => {
 // ----------------------------------  Post  ----------------------------------------
 router.post(
   "/",
-  [auth, admin, upload.single("image")],
+  [auth, admin],
   async (req: Request<any>, res: Response<any>) => {
-    // @ts-ignore
-    const file = req.file;
-
     const { error } = validateArticle(req.body);
 
     if (error) return res.status(400).send(error.details[0].message);
 
     let article = new Article({
       ...req.body,
-      image: env?.BASE_URL + file.filename,
     });
     article = await article.save();
 
@@ -90,23 +87,15 @@ router.post(
 // ----------------------------------  Put  -----------------------------------------
 router.put(
   "/:id",
-  [auth, admin, upload.single("image")],
+  [auth, admin],
   async (req: Request<any>, res: Response<any>) => {
-    // @ts-ignore
-    const file = req.file;
-
     const { error } = validateArticle(req.body);
     if (error) return res.status(400).send(error.details[0].message);
-
-    console.log('req', req)
-    // if(file?.filename)
-    // await unlinkAsync("")
 
     const article = await Article.findByIdAndUpdate(
       req.params.id,
       {
         ...req.body,
-        image: file?.filename ? env?.BASE_URL + file.filename : null,
       },
       { new: true }
     );
@@ -118,11 +107,51 @@ router.put(
   }
 );
 
+// ----------------------------------  Patch  -----------------------------------------------
+router.patch(
+  "/:id/image",
+  [auth, admin, upload.single("image")],
+  async (req: Request<any>, res: Response<any>) => {
+    // @ts-ignore
+    const image = req.file;
+
+    const article = await Article.findById(req.params.id);
+
+    if (!article) return res.status(404).send("Article not found");
+
+    let articleImage = article.image;
+    article.image = image?.filename ? env?.BASE_URL + image?.filename : null;
+
+    const result = await article.save();
+
+    if (articleImage) {
+      articleImage = articleImage?.replace(env?.BASE_URL!, "");
+      try {
+        await unlinkAsync(`./uploads/${articleImage}`);
+      } catch (e) {
+        console.log("can not delete image, article =>", article);
+      }
+    }
+
+    res.send(result);
+  }
+);
+
 // ----------------------------------  Delete  -----------------------------------------
 router.delete("/:id", [auth, admin], async (req: any, res: any) => {
   const article = await Article.findByIdAndRemove(req.params.id);
 
   if (!article) return res.status(404).send("Article not found");
+
+  const articleImage = article?.image?.replace(env?.BASE_URL!, "");
+
+  if (articleImage) {
+    try {
+      await unlinkAsync(`./uploads/${articleImage}`);
+    } catch (e) {
+      console.log("can not edit file, article =>", article);
+    }
+  }
 
   res.send(article);
 });

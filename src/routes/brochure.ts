@@ -120,10 +120,8 @@ router.patch(
 
     const result = await brochure.save();
 
-    console.log("brochureFile", brochureFile);
     if (brochureFile) {
       brochureFile = brochureFile?.replace(env?.BASE_URL!, "");
-      console.log("brochureFile", brochureFile);
       try {
         await unlinkAsync(`./uploads/${brochureFile}`);
       } catch (e) {
@@ -140,6 +138,16 @@ router.delete("/:id", [auth, admin], async (req: any, res: any) => {
   const brochure = await Brochure.findByIdAndRemove(req.params.id);
 
   if (!brochure) return res.status(404).send("Brochure not found");
+
+  const brochureFile = brochure?.file?.replace(env?.BASE_URL!, "");
+
+  if(brochureFile) {
+    try {
+      await unlinkAsync(`./uploads/${brochureFile}`);
+    } catch (e) {
+      console.log('can not edit file, brochure =>', brochure)
+    }
+  }
 
   res.send(brochure);
 });
