@@ -8,21 +8,14 @@ import {
   validateEditeBrochure,
 } from "../models/Brochure";
 import { ELanguage } from "../types/common";
+import { upload } from "../utils/multer";
+import dotenv from "dotenv";
 
-const multer = require("multer");
-
-const storage = multer.diskStorage({
-  destination: (req: any, file: any, cb: any) => {
-    cb(null, "uploads/");
-  },
-  filename: (req: any, file: any, cb: any) => {
-    cb(null, Date.now() + "-" + file.originalname);
-  },
-});
-
-const upload = multer({ storage: storage });
-
+const fs = require("fs");
+const { promisify } = require("util");
+const unlinkAsync = promisify(fs.unlink);
 const router = express.Router();
+const env = dotenv.config().parsed;
 
 // ----------------------------------  Get  --------------------------------------
 interface IBrochureParams {
@@ -106,6 +99,38 @@ router.put(
     if (!brochure) return res.status(404).send("Brochure not found");
 
     const result = await brochure.save();
+    res.send(result);
+  }
+);
+
+// ----------------------------------  Patch  -----------------------------------------------
+router.patch(
+  "/:id/file",
+  [auth, admin, upload.single("file")],
+  async (req: Request<any>, res: Response<any>) => {
+    // @ts-ignore
+    const file = req.file;
+
+    const brochure = await Brochure.findById(req.params.id);
+
+    if (!brochure) return res.status(404).send("Brochure not found");
+
+    let brochureFile = brochure.file;
+    brochure.file = file?.filename ? env?.BASE_URL + file?.filename : null;
+
+    const result = await brochure.save();
+
+    console.log("brochureFile", brochureFile);
+    if (brochureFile) {
+      brochureFile = brochureFile?.replace(env?.BASE_URL!, "");
+      console.log("brochureFile", brochureFile);
+      try {
+        await unlinkAsync(`./uploads/${brochureFile}`);
+      } catch (e) {
+        console.log('can not edit file, brochure =>', brochure)
+      }
+    }
+
     res.send(result);
   }
 );
