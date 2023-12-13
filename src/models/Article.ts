@@ -12,7 +12,7 @@ export interface IArticle extends Document{
 }
 
 const articleSchema = new Schema<IArticle>({
-  title: { type: String, minLength: 3, maxLength: 25 },
+  title: { type: String, minLength: 3},
   lang: { type: String, enum: ELanguage, required: true },
   content: { type: String, minlength: 24, required: true },
   image: { type: String },

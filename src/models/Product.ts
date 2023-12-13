@@ -1,36 +1,41 @@
 import Joi from "joi";
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Document, Schema } from "mongoose";
 import { ELanguage } from "../types/common";
-import {ICategory} from "./Category";
-import {IBrand} from "./Brand";
+import { ICategory } from "./Category";
+import { IBrand } from "./Brand";
 
-export interface IProduct extends Document{
+export interface IProduct extends Document {
   title: string;
   lang: ELanguage;
-  category: ICategory
-  brand: IBrand
+  category: ICategory;
+  brand: IBrand;
   createdAt: Date;
   updatedAt: Date;
-  images: string[]
-  isAvailable: boolean
+  image: string;
+  images: string[];
+  isAvailable: boolean;
   engineNumber: string;
-  technicalNumber: string
-  description: string
-  review: string
+  technicalNumber: string;
+  description: string;
+  review: string;
 }
 
-const productSchema = new Schema<IProduct>({
-  title: { type: String, minLength: 3, maxLength: 25, required: true },
-  lang: { type: String, enum: ELanguage, required: true },
-  category: {type: mongoose.Schema.Types.ObjectId, ref: 'Category'},
-  brand: {type: mongoose.Schema.Types.ObjectId, ref: 'Brand'},
-  images: { type: [String], required: true },
-  isAvailable: {type: Boolean, required: true},
-  engineNumber: {type: String, required: true},
-  technicalNumber: {type: String, required: true},
-  description: {type: String, required: true},
-  review: {type: String, required: true},
-}, {timestamps: true});
+const productSchema = new Schema<IProduct>(
+  {
+    title: { type: String, minLength: 3, maxLength: 25, required: true },
+    lang: { type: String, enum: ELanguage, required: true },
+    category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
+    brand: { type: mongoose.Schema.Types.ObjectId, ref: "Brand" },
+    image: { type: String },
+    images: { type: [String] },
+    isAvailable: { type: Boolean, required: true },
+    engineNumber: { type: String, required: true },
+    technicalNumber: { type: String, required: true },
+    description: { type: String, required: true },
+    review: { type: String, required: true },
+  },
+  { timestamps: true }
+);
 
 const Product = mongoose.model<IProduct>("Product", productSchema);
 
