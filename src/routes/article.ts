@@ -6,6 +6,7 @@ import { Article, validateArticle } from "../models/Article";
 import { ELanguage } from "../types/common";
 import dotenv from "dotenv";
 import { Brochure } from "../models/Brochure";
+import {paginateResults} from "../utils/pagination";
 
 const fs = require("fs");
 const { promisify } = require("util");
@@ -37,6 +38,7 @@ interface IArticleParams {
 }
 
 router.get("/", checkLang, async (req: Request<any>, res) => {
+
   const {
     title,
     page = 1,
@@ -51,10 +53,16 @@ router.get("/", checkLang, async (req: Request<any>, res) => {
     query.title = new RegExp(title, "i");
   }
 
-  const articles = await Article.find(query)
-    .sort(sort) // Default to sorting by title
-    .skip((page - 1) * +limit)
-    .limit(+limit);
+  // const articles = await Article.find(query)
+  //   .sort(sort) // Default to sorting by title
+  //   .skip((page - 1) * +limit)
+  //   .limit(+limit)
+  // ;
+  //
+  // const a = {data: articles}
+
+  const articles = await paginateResults({model: Article, limit, page, sort, query})
+
   res.send(articles);
 });
 
