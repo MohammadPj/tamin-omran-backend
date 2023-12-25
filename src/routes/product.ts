@@ -6,6 +6,7 @@ import { Product, validateProduct } from "../models/Product";
 import { ELanguage } from "../types/common";
 import { upload } from "../utils/multer";
 import dotenv from "dotenv";
+import { paginateResults } from "../utils/pagination";
 
 const fs = require("fs");
 const { promisify } = require("util");
@@ -43,7 +44,17 @@ router.get("/", checkLang, async (req: Request<any>, res) => {
     .limit(+limit)
     .populate("category")
     .populate("brand");
-  res.send(products);
+
+
+  const productsRes = await paginateResults({
+    documents: products,
+    limit,
+    page,
+    query,
+    model: Product,
+  });
+
+  res.send(productsRes);
 });
 
 router.get("/:id", async (req, res) => {

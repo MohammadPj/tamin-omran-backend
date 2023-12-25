@@ -3,8 +3,9 @@ const auth = require("../middleware/authorization");
 const admin = require("../middleware/admin");
 const checkLang = require("../middleware/language");
 import { Category, validateCategory } from "../models/Category";
-import {ELanguage} from "../types/common";
-import {Product} from "../models/Product";
+import { ELanguage } from "../types/common";
+import { Product } from "../models/Product";
+import { paginateResults } from "../utils/pagination";
 
 const router = express.Router();
 
@@ -14,13 +15,19 @@ interface ICategoryParams {
   page?: number;
   limit?: number;
   sort?: string;
-  lang?: ELanguage
+  lang?: ELanguage;
 }
 
 router.get("/", checkLang, async (req: Request<any>, res) => {
-  const { title, page = 1, limit = 100, sort, ...rest }: ICategoryParams = req.query;
+  const {
+    title,
+    page = 1,
+    limit = 100,
+    sort,
+    ...rest
+  }: ICategoryParams = req.query;
 
-  const query: any = {...rest};
+  const query: any = { ...rest };
 
   if (title) {
     query.title = new RegExp(title, "i");
@@ -30,7 +37,16 @@ router.get("/", checkLang, async (req: Request<any>, res) => {
     .sort(sort) // Default to sorting by title
     .skip((page - 1) * +limit)
     .limit(+limit);
-  res.send(categories);
+
+  const catRes = await paginateResults({
+    model: Category,
+    query,
+    page,
+    limit,
+    documents: categories,
+  });
+
+  res.send(catRes);
 });
 
 router.get("/:id", async (req, res) => {
@@ -58,25 +74,29 @@ router.post(
 );
 
 // ----------------------------------  Put  -----------------------------------------
-router.put("/:id", [auth, admin],async (req: Request<any>, res: Response<any>) => {
-  const { error } = validateCategory(req.body);
-  if (error) return res.status(400).send(error.details[0].message);
+router.put(
+  "/:id",
+  [auth, admin],
+  async (req: Request<any>, res: Response<any>) => {
+    const { error } = validateCategory(req.body);
+    if (error) return res.status(400).send(error.details[0].message);
 
-  const category = await Category.findByIdAndUpdate(
-    req.params.id,
-    { ...req.body },
-    { new: true }
-  );
-  // const category = await Category.findById(req.params.id)
-  if (!category) return res.status(404).send("Category not found");
+    const category = await Category.findByIdAndUpdate(
+      req.params.id,
+      { ...req.body },
+      { new: true }
+    );
+    // const category = await Category.findById(req.params.id)
+    if (!category) return res.status(404).send("Category not found");
 
-  const result = await category.save();
-  res.send(result);
-});
+    const result = await category.save();
+    res.send(result);
+  }
+);
 
 // ----------------------------------  Delete  -----------------------------------------
 router.delete("/:id", [auth, admin], async (req: any, res: any) => {
-  const product = await Product.findOne({category: req.params.id})
+  const product = await Product.findOne({ category: req.params.id });
 
   if (product) return res.status(500).send("از این دسته بندی استفاده شده است");
 

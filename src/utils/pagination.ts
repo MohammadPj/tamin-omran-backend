@@ -5,33 +5,26 @@ interface Props {
   page: number;
   limit: number;
   query: any;
-  sort: any;
+  documents: any
 }
 
 export const paginateResults = async ({
   model,
-  sort,
+  documents,
   query,
   page = 1,
   limit = 10,
 }: Props) => {
 
-  console.log('page', page)
-  console.log('limit', limit)
-
   const currentPage = page || 1
 
   try {
-    const results = await model
-      .find(query)
-      .sort(sort)
-      .skip((currentPage - 1) * +limit)
-      .limit(+limit);
+
 
     const count = await model.countDocuments(query);
 
-    const response = {
-      data: results,
+    return {
+      data: documents,
       meta: {
         count: count,
         page: +currentPage,
@@ -39,8 +32,6 @@ export const paginateResults = async ({
         totalPages: Math.ceil(count / +limit),
       },
     };
-
-    return response;
   } catch (error) {
     // Handle errors
     console.error(error);

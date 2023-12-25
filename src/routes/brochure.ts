@@ -10,6 +10,8 @@ import {
 import { ELanguage } from "../types/common";
 import { upload } from "../utils/multer";
 import dotenv from "dotenv";
+import { paginateResults } from "../utils/pagination";
+import { Brand } from "../models/Brand";
 
 const fs = require("fs");
 const { promisify } = require("util");
@@ -47,7 +49,15 @@ router.get("/", checkLang, async (req: Request<any>, res) => {
     .limit(+limit)
     .populate("brochureType");
 
-  res.send(brochures);
+  const brochuresRes = await paginateResults({
+    documents: brochures,
+    limit,
+    page,
+    query,
+    model: Brochure,
+  });
+
+  res.send(brochuresRes);
 });
 
 router.get("/:id", async (req, res) => {
@@ -125,7 +135,7 @@ router.patch(
       try {
         await unlinkAsync(`./uploads/${brochureFile}`);
       } catch (e) {
-        console.log('can not edit file, brochure =>', brochure)
+        console.log("can not edit file, brochure =>", brochure);
       }
     }
 
@@ -141,11 +151,11 @@ router.delete("/:id", [auth, admin], async (req: any, res: any) => {
 
   const brochureFile = brochure?.file?.replace(env?.BASE_URL!, "");
 
-  if(brochureFile) {
+  if (brochureFile) {
     try {
       await unlinkAsync(`./uploads/${brochureFile}`);
     } catch (e) {
-      console.log('can not edit file, brochure =>', brochure)
+      console.log("can not edit file, brochure =>", brochure);
     }
   }
 

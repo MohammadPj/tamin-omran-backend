@@ -6,6 +6,8 @@ import { Brand, validateBrand } from "../models/Brand";
 import {ELanguage} from "../types/common";
 import {Brochure} from "../models/Brochure";
 import {Product} from "../models/Product";
+import {paginateResults} from "../utils/pagination";
+import {Article} from "../models/Article";
 
 const router = express.Router();
 
@@ -31,7 +33,9 @@ router.get("/", checkLang,async (req: Request<any>, res) => {
     .sort(sort) // Default to sorting by title
     .skip((page - 1) * +limit)
     .limit(+limit);
-  res.send(brands);
+
+  const brandsRes = await paginateResults({model: Brand, limit, page, query, documents: brands})
+  res.send(brandsRes);
 });
 
 router.get("/:id", async (req, res) => {
