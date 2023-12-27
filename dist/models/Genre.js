@@ -17,4 +17,4 @@ const validateGenre = (genre) => {
     return schema.validate(genre);
 };
 exports.validateGenre = validateGenre;
-//# sourceMappingURL=Genre.js.map
+//# sourceMappingURL=Category.js.map

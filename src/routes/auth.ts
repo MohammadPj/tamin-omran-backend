@@ -2,6 +2,7 @@ import Joi from "joi";
 import { User } from "../models/User";
 let express = require("express");
 const bcrypt = require("bcrypt");
+const lodash = require("lodash");
 
 const router = express.Router();
 
@@ -34,7 +35,7 @@ router.post("/", async (req: any, res: any) => {
   // @ts-ignore
   const token = user.generateAuthToken()
 
-  res.send(token)
+  res.send({token, ...lodash.pick(user, ["firstName","lastName", "email", "isAdmin"]) })
 });
 
 module.exports = router;

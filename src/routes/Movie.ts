@@ -47,7 +47,7 @@ router.put("/:id", async (req: any, res: any) => {
     { ...req.body, genre: req.body.genreId },
     { new: true }
   );
-  // const genre = await Genre.findById(req.params.id)
+  // const genre = await Category.findById(req.params.id)
   if (!movie) return res.status(404).send("Movie not found");
 
   const result = await movie.save();
