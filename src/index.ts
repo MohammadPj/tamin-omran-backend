@@ -2,7 +2,13 @@ import express from "express";
 import winston from "winston";
 const cors = require('cors');
 // const startupDebugger = require("debug")("app:startup");
+import * as path from 'path';
+console.log('##########');
 
+const here = __dirname
+console.log(path.join(__dirname, 'uploads'));
+
+console.log('##########');
 const app = express();
 
 require('./startup/logging')()
