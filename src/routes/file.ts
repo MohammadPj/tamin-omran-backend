@@ -46,7 +46,7 @@ router.post(
     const env = dotenv.config().parsed
 
     let file = new File({
-      link: reqFile?.filename,
+      link: env?.BASE_URL + reqFile?.filename,
       name: reqFile?.originalname,
       type: reqFile?.mimetype,
       size: reqFile?.size,
