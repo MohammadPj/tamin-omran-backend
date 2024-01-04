@@ -34,9 +34,13 @@ router.get("/", checkLang, async (req: Request<any>, res) => {
 
   const query: any = { ...rest };
 
-  if (title) {
-    query.title = new RegExp(title, "i");
-  }
+  Object?.entries(query)?.forEach(([key, value]) => {
+    query[key] = new RegExp(value as string, "i");
+  })
+
+  // if (title) {
+  //   query.title = new RegExp(title, "i");
+  // }
 
   const products = await Product.find(query)
     .sort(sort)
