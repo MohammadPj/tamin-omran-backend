@@ -8,7 +8,7 @@ const router = express.Router();
 
 const validate = (user: any) => {
   const schema = Joi.object({
-    email: Joi.string().required().min(5).max(255).email(),
+    username: Joi.string().required().min(5).max(255),
     password: Joi.string().required().min(5).max(1024),
   });
 
@@ -20,7 +20,7 @@ router.post("/", async (req: any, res: any) => {
   const { error } = validate(req.body);
   if (error) return res.status(400).send(error.details[0].message);
 
-  let user = await User.findOne({ email: req.body.email });
+  let user = await User.findOne({ username: req.body.username });
 
   if (!user) return res.status(400).send("invalid email or password");
 
@@ -35,7 +35,7 @@ router.post("/", async (req: any, res: any) => {
   // @ts-ignore
   const token = user.generateAuthToken()
 
-  res.send({token, ...lodash.pick(user, ["firstName","lastName", "email", "isAdmin"]) })
+  res.send({token, ...lodash.pick(user, ["firstName","lastName", "username", "isAdmin", 'email', 'phoneNumber']) })
 });
 
 module.exports = router;

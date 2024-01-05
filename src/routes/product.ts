@@ -2,11 +2,13 @@ import express, { Request, Response } from "express";
 const auth = require("../middleware/authorization");
 const admin = require("../middleware/admin");
 const checkLang = require("../middleware/language");
-import { Product, validateProduct } from "../models/Product";
+import { IProduct, Product, validateProduct } from "../models/Product";
 import { ELanguage } from "../types/common";
 import { upload } from "../utils/multer";
 import dotenv from "dotenv";
 import { paginateResults } from "../utils/pagination";
+import { convertQueryToRegex } from "../utils/methods";
+import qs from 'qs'
 
 const fs = require("fs");
 const { promisify } = require("util");
@@ -23,32 +25,24 @@ interface IProductParams {
   lang?: ELanguage;
 }
 
-router.get("/", checkLang, async (req: Request<any>, res) => {
-  const {
-    title,
-    page = 1,
-    limit = 100,
-    sort,
-    ...rest
-  }: IProductParams = req.query;
+router.get("/", async (req: Request<any>, res) => {
+  const { page = 1, limit = 100, sort, ...rest }: IProductParams = req.query;
 
-  const query: any = { ...rest };
+  const query: any = qs.parse(rest) ;
 
-  Object?.entries(query)?.forEach(([key, value]) => {
-    query[key] = new RegExp(value as string, "i");
-  })
+  convertQueryToRegex({
+    query,
+    exceptions: ["brand", "category.fa", "category.en", "isAvailable"],
+  });
 
-  // if (title) {
-  //   query.title = new RegExp(title, "i");
-  // }
 
   const products = await Product.find(query)
     .sort(sort)
     .skip((page - 1) * +limit)
     .limit(+limit)
-    .populate("category")
+    .populate("category.fa")
+    .populate("category.en")
     .populate("brand");
-
 
   const productsRes = await paginateResults({
     documents: products,
@@ -80,11 +74,16 @@ router.post(
 
     if (error) return res.status(400).send(error.details[0].message);
 
-    let product = new Product({
-      ...req.body,
-      category: req.body.categoryId,
+    const productBody: IProduct = {
+      // title: {fa: req.body?.titleFa, en: req.body?.titleEn},
+      // description: {fa: req.body?.descriptionFa, en: req.body?.descriptionEn},
+      // review: {fa: req.body?.review, en: req.body?.review},
+      category: { fa: req?.body?.categoryId?.fa, en: req.body?.categoryId?.en },
       brand: req.body.brandId,
-    });
+      ...req.body,
+    };
+
+    let product = new Product(productBody);
 
     product = await product.populate("category brand");
 
@@ -104,9 +103,16 @@ router.put(
 
     const product = await Product.findByIdAndUpdate(
       req.params.id,
-      { ...req.body, category: req.body.categoryId, brand: req.body.brandId },
+      {
+        ...req.body,
+        category: {
+          fa: req?.body?.categoryId?.fa,
+          en: req.body?.categoryId?.en,
+        },
+        brand: req.body.brandId,
+      },
       { new: true }
-    ).populate("category brand");
+    ).populate("brand");
 
     // const product = await Product.findById(req.params.id)
     if (!product) return res.status(404).send("Product not found");
@@ -159,13 +165,9 @@ router.patch(
     }
 
     if (productImages) {
-      console.log("productImages", productImages);
       productImages = productImages.map((i) => i?.replace(env?.BASE_URL!, ""));
-      console.log("productImages", productImages);
 
       for (let i = 0; i < productImages.length; i++) {
-        console.log("productImages[i]", productImages[i]);
-
         try {
           await unlinkAsync(`./uploads/${productImages[i]}`);
         } catch (e) {
