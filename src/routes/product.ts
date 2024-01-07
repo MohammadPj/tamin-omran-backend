@@ -23,9 +23,17 @@ interface IProductParams {
   lang?: ELanguage;
 }
 
+export const convertQueryToRegex = ({query, exceptions}: {query: {}, exceptions: string[]}) => {
+  return Object?.entries(query)
+    ?.filter(([key]) => !exceptions.includes(key))
+    ?.forEach(([key, value]) => {
+      // @ts-ignore
+      query[key] = new RegExp(value, "i");
+    });
+}
+
 router.get("/", checkLang, async (req: Request<any>, res) => {
   const {
-    title,
     page = 1,
     limit = 100,
     sort,
@@ -34,10 +42,12 @@ router.get("/", checkLang, async (req: Request<any>, res) => {
 
   const query: any = { ...rest };
 
-  Object?.entries(query)?.forEach(([key, value]) => {
-    query[key] = new RegExp(value as string, "i");
-  })
+  convertQueryToRegex({
+    query,
+    exceptions: ["brand", "category", "isAvailable"],
+  });
 
+  console.log('query', query)
   // if (title) {
   //   query.title = new RegExp(title, "i");
   // }
