@@ -19,10 +19,10 @@ require('./startup/tools')(app)
 
 app.use(cors());
 
-app.use((req, res, next) => {
-  res.setHeader('Referrer-Policy', 'no-referrer');
-  next();
-});
+// app.use((req, res, next) => {
+//   res.setHeader('Referrer-Policy', 'no-referrer');
+//   next();
+// });
 
 const port = process.env.PORT || 4000;
 app.listen(port, () => {
