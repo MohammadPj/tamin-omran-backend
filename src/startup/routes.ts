@@ -10,7 +10,6 @@ const movies = require("../routes/Movie");
 const customers = require("../routes/Customers");
 const rentals = require("../routes/rentals");
 const register = require("../routes/register");
-const user = require("../routes/user");
 const auth = require("../routes/auth");
 const file = require("../routes/file");
 
@@ -30,7 +29,6 @@ module.exports = (app: Express) => {
   app.use("/api/customers", customers);
   app.use("/api/rentals", rentals);
   app.use("/api/register", register);
-  app.use("/api/user", user);
   app.use("/api/auth", auth);
   app.use("/api/file", file);
   app.use(error);
