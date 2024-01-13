@@ -32,16 +32,14 @@ router.get("/", async (req: Request<any>, res) => {
 
   convertQueryToRegex({
     query,
-    exceptions: ["brand", "category.fa", "category.en", "isAvailable"],
+    exceptions: ["brand", "category", "isAvailable"],
   });
-
 
   const products = await Product.find(query)
     .sort(sort)
     .skip((page - 1) * +limit)
     .limit(+limit)
-    .populate("category.fa")
-    .populate("category.en")
+    .populate("category")
     .populate("brand");
 
   const productsRes = await paginateResults({
@@ -78,7 +76,7 @@ router.post(
       // title: {fa: req.body?.titleFa, en: req.body?.titleEn},
       // description: {fa: req.body?.descriptionFa, en: req.body?.descriptionEn},
       // review: {fa: req.body?.review, en: req.body?.review},
-      category: { fa: req?.body?.categoryId?.fa, en: req.body?.categoryId?.en },
+      category: req?.body?.categoryId,
       brand: req.body.brandId,
       ...req.body,
     };
@@ -105,10 +103,7 @@ router.put(
       req.params.id,
       {
         ...req.body,
-        category: {
-          fa: req?.body?.categoryId?.fa,
-          en: req.body?.categoryId?.en,
-        },
+        category: req?.body?.categoryId,
         brand: req.body.brandId,
       },
       { new: true }

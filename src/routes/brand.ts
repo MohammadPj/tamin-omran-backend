@@ -20,7 +20,7 @@ interface IBrandParams {
   lang?: ELanguage
 }
 
-router.get("/", checkLang,async (req: Request<any>, res) => {
+router.get("/", async (req: Request<any>, res) => {
   const { title, page = 1, limit = 100, sort, ...rest }: IBrandParams = req.query;
 
   const query: any = {...rest};
@@ -82,9 +82,9 @@ router.put("/:id", [auth, admin],async (req: Request<any>, res: Response<any>) =
 // ----------------------------------  Delete  -----------------------------------------
 router.delete("/:id", [auth, admin], async (req: any, res: any) => {
 
-  const product = await Product.findOne({brand: req.params.id})
-
-  if (product) return res.status(500).send("از این برند استفاده شده است");
+  // const product = await Product.findOne({brand: req.params.id})
+  //
+  // if (product) return res.status(500).send("از این برند استفاده شده است");
 
   const brand = await Brand.findByIdAndRemove(req.params.id);
 

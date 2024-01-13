@@ -775,3 +775,34 @@
 {"level":"info","message":"Connected to MongoDB..."}
 {"level":"info","message":"listening to port 4000"}
 {"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"kind":"ObjectId","level":"error","message":"Cast to ObjectId failed for value \"{ fa: undefined, en: undefined }\" (type Object) at path \"category\" because of \"BSONTypeError\" Cast to ObjectId failed for value \"{ fa: undefined, en: undefined }\" (type Object) at path \"category\" because of \"BSONTypeError\"","path":"category","reason":{},"stack":"CastError: Cast to ObjectId failed for value \"{ fa: undefined, en: undefined }\" (type Object) at path \"category\" because of \"BSONTypeError\"\n    at model.Query.exec (F:\\Developer\\Code\\Projects\\tamin-omran\\tamin-omran-backend\\node_modules\\mongoose\\lib\\query.js:4913:21)\n    at model.Query.Query.then (F:\\Developer\\Code\\Projects\\tamin-omran\\tamin-omran-backend\\node_modules\\mongoose\\lib\\query.js:5012:15)\n    at processTicksAndRejections (node:internal/process/task_queues:95:5)","stringValue":"\"{ fa: undefined, en: undefined }\"","value":{},"valueType":"Object"}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}
+{"level":"info","message":"listening to port 4000"}
+{"level":"info","message":"Connected to MongoDB..."}

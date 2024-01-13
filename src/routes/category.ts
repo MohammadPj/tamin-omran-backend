@@ -18,7 +18,7 @@ interface ICategoryParams {
   lang?: ELanguage;
 }
 
-router.get("/", checkLang, async (req: Request<any>, res) => {
+router.get("/", async (req: Request<any>, res) => {
   const {
     title,
     page = 1,
@@ -96,9 +96,9 @@ router.put(
 
 // ----------------------------------  Delete  -----------------------------------------
 router.delete("/:id", [auth, admin], async (req: any, res: any) => {
-  const product = await Product.findOne({ category: req.params.id });
-
-  if (product) return res.status(500).send("از این دسته بندی استفاده شده است");
+  // const product = await Product.findOne({ category: req.params.id });
+  //
+  // if (product) return res.status(500).send("از این دسته بندی استفاده شده است");
 
   const category = await Category.findByIdAndRemove(req.params.id);
 

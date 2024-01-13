@@ -22,10 +22,7 @@ const productSchema = new Schema<IProduct>(
   {
     // multi-lang props
     title: { en: { type: String }, fa: { type: String } },
-    category: {
-      fa: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
-      en: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
-    },
+    category: { type: mongoose.Schema.Types.ObjectId, ref: "Category" },
     description: { en: { type: String }, fa: { type: String } },
     review: { en: { type: String }, fa: { type: String } },
 
@@ -48,10 +45,7 @@ const validateProduct = (product: any) => {
       fa: Joi.string().min(3),
       en: Joi.string().min(3),
     }) ,
-    categoryId: Joi.object({
-      fa: Joi.string(),
-      en: Joi.string(),
-    }) ,
+    categoryId: Joi.string() ,
     description: Joi.object({
       fa: Joi.string(),
       en: Joi.string(),
