@@ -2,6 +2,7 @@ import Joi from "joi";
 import mongoose, { Document, Schema } from "mongoose";
 import { ICategory } from "./Category";
 import { IBrand } from "./Brand";
+import {IEngineNumber} from "./EngineNumber";
 
 export interface IProduct extends Document {
   title: { fa: string; en: string };
@@ -12,7 +13,7 @@ export interface IProduct extends Document {
   image: string;
   images: string[];
   isAvailable: boolean;
-  engineNumber: string;
+  engineNumber: IEngineNumber
   technicalNumber: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -28,10 +29,10 @@ const productSchema = new Schema<IProduct>(
 
     // independent
     brand: { type: mongoose.Schema.Types.ObjectId, ref: "Brand" },
+    engineNumber: { type: mongoose.Schema.Types.ObjectId, ref: "EngineNumber", required: true },
     image: { type: String },
     images: { type: [String] },
     isAvailable: { type: Boolean, required: true },
-    engineNumber: { type: String, required: true },
     technicalNumber: { type: String, required: true },
   },
   { timestamps: true }

@@ -42,6 +42,7 @@ router.get("/", async (req: Request<any>, res) => {
     .skip((page - 1) * +limit)
     .limit(+limit)
     .populate("category")
+    .populate("engineNumber")
     .populate("brand");
 
   const productsRes = await paginateResults({
@@ -58,6 +59,7 @@ router.get("/", async (req: Request<any>, res) => {
 router.get("/:id", async (req, res) => {
   const product = await Product.findById(req.params.id)
     .populate("category")
+    .populate("engineNumber")
     .populate("brand");
 
   if (!product) return res.status(404).send("product not found");
@@ -108,21 +110,13 @@ router.put(
     const { error } = validateProduct(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    const productBody: IProduct = {
-      ...req.body,
-      category: req?.body?.categoryId,
-      brand: req.body.brandId,
-    };
+    const prvsProduct = await Product.findById(req.params.id).populate("engineNumber")
+    const prvsEngineNumber = prvsProduct?.engineNumber?._id?.toString()
+    const newEngineNumber = req.body?.engineNumber
 
-    const engineNumber = req.body?.engineNumber;
-    if (mongoose.Types.ObjectId.isValid(engineNumber)) {
-      const engine = await EngineNumber?.findById(engineNumber);
-      if(engine) productBody.engineNumber = engine._id
-    } else {
-      const engine = await new EngineNumber({title: engineNumber})
-      await engine.save()
-      productBody.engineNumber = engine._id
-    }
+    console.log('prvsProduct', prvsEngineNumber)
+    console.log('newEngineNumber', newEngineNumber)
+    console.log('cond', newEngineNumber === prvsEngineNumber)
 
     const product = await Product.findByIdAndUpdate(
       req.params.id,
