@@ -8,7 +8,9 @@ import { upload } from "../utils/multer";
 import dotenv from "dotenv";
 import { paginateResults } from "../utils/pagination";
 import { convertQueryToRegex } from "../utils/methods";
-import qs from 'qs'
+import qs from "qs";
+import { EngineNumber } from "../models/EngineNumber";
+import mongoose from "mongoose";
 
 const fs = require("fs");
 const { promisify } = require("util");
@@ -28,7 +30,7 @@ interface IProductParams {
 router.get("/", async (req: Request<any>, res) => {
   const { page = 1, limit = 100, sort, ...rest }: IProductParams = req.query;
 
-  const query: any = qs.parse(rest) ;
+  const query: any = qs.parse(rest);
 
   convertQueryToRegex({
     query,
@@ -73,13 +75,20 @@ router.post(
     if (error) return res.status(400).send(error.details[0].message);
 
     const productBody: IProduct = {
-      // title: {fa: req.body?.titleFa, en: req.body?.titleEn},
-      // description: {fa: req.body?.descriptionFa, en: req.body?.descriptionEn},
-      // review: {fa: req.body?.review, en: req.body?.review},
       category: req?.body?.categoryId,
       brand: req.body.brandId,
       ...req.body,
     };
+
+    const engineNumber = req.body?.engineNumber;
+    if (mongoose.Types.ObjectId.isValid(engineNumber)) {
+      const engine = await EngineNumber?.findById(engineNumber);
+      if(engine) productBody.engineNumber = engine._id
+    } else {
+      const engine = await new EngineNumber({title: engineNumber})
+      await engine.save()
+      productBody.engineNumber = engine._id
+    }
 
     let product = new Product(productBody);
 
@@ -99,6 +108,22 @@ router.put(
     const { error } = validateProduct(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
+    const productBody: IProduct = {
+      ...req.body,
+      category: req?.body?.categoryId,
+      brand: req.body.brandId,
+    };
+
+    const engineNumber = req.body?.engineNumber;
+    if (mongoose.Types.ObjectId.isValid(engineNumber)) {
+      const engine = await EngineNumber?.findById(engineNumber);
+      if(engine) productBody.engineNumber = engine._id
+    } else {
+      const engine = await new EngineNumber({title: engineNumber})
+      await engine.save()
+      productBody.engineNumber = engine._id
+    }
+
     const product = await Product.findByIdAndUpdate(
       req.params.id,
       {
@@ -108,6 +133,12 @@ router.put(
       },
       { new: true }
     ).populate("brand");
+
+    // --------------------- Removing Engine number
+    const engineUsedInProductCount = await Product.find({engineNumber: product?.engineNumber}).count()
+    if(engineUsedInProductCount < 1) {
+      const engine = await EngineNumber.findByIdAndRemove(req?.body?.engineNumber)
+    }
 
     // const product = await Product.findById(req.params.id)
     if (!product) return res.status(404).send("Product not found");
@@ -177,12 +208,20 @@ router.patch(
 
 // ----------------------------------  Delete  --------------------------------------
 router.delete("/:id", [auth, admin], async (req: any, res: any) => {
+  // const product = await Product.findById(req.params.id)
   const product = await Product.findByIdAndRemove(req.params.id).populate(
     "category brand"
   );
 
   if (!product) return res.status(404).send("Product not found");
 
+  // --------------------- Removing Engine number
+  const engineUsedInProductCount = await Product.find({engineNumber: product.engineNumber}).count()
+  if(engineUsedInProductCount < 1) {
+    const engine = await EngineNumber.findByIdAndRemove(product.engineNumber)
+  }
+
+  // // --------------------- Removing images
   let productImages = product.images;
   let productImage = product.image;
 
