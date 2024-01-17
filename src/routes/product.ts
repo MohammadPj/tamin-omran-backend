@@ -28,16 +28,22 @@ interface IProductParams {
 }
 
 router.get("/", async (req: Request<any>, res) => {
-  const { page = 1, limit = 100, sort, ...rest }: IProductParams = req.query;
+  const { page = 1, limit = 100, sort, title, ...rest }: IProductParams = req.query;
 
   const query: any = qs.parse(rest);
 
   convertQueryToRegex({
     query,
-    exceptions: ["brand", "category", "isAvailable"],
+    exceptions: ["brand", "category", "isAvailable", "engineNumber"],
   });
 
-  const products = await Product.find(query)
+  if(title) {
+    query.$or = [{ "title.en": new RegExp(title, "i") }, { "title.fa": new RegExp(title, "i") }]
+  }
+
+  const products = await Product.find({
+    ...query,
+  })
     .sort(sort)
     .skip((page - 1) * +limit)
     .limit(+limit)
@@ -85,11 +91,11 @@ router.post(
     const engineNumber = req.body?.engineNumber;
     if (mongoose.Types.ObjectId.isValid(engineNumber)) {
       const engine = await EngineNumber?.findById(engineNumber);
-      if(engine) productBody.engineNumber = engine._id
+      if (engine) productBody.engineNumber = engine._id;
     } else {
-      const engine = await new EngineNumber({title: engineNumber})
-      await engine.save()
-      productBody.engineNumber = engine._id
+      const engine = await new EngineNumber({ title: engineNumber });
+      await engine.save();
+      productBody.engineNumber = engine._id;
     }
 
     let product = new Product(productBody);
@@ -110,28 +116,56 @@ router.put(
     const { error } = validateProduct(req.body);
     if (error) return res.status(400).send(error.details[0].message);
 
-    const prvsProduct = await Product.findById(req.params.id).populate("engineNumber")
-    const prvsEngineNumber = prvsProduct?.engineNumber?._id?.toString()
-    const newEngineNumber = req.body?.engineNumber
+    const prvsProduct = await Product.findById(req.params.id).populate(
+      "engineNumber"
+    );
+    const prvsEngineNumber = prvsProduct?.engineNumber?._id?.toString();
+    const newEngineNumber = req.body?.engineNumber;
 
-    console.log('prvsProduct', prvsEngineNumber)
-    console.log('newEngineNumber', newEngineNumber)
-    console.log('cond', newEngineNumber === prvsEngineNumber)
+    const productBody = {
+      ...req.body,
+      category: req?.body?.categoryId,
+      brand: req.body.brandId,
+    };
+
+    if (newEngineNumber !== prvsEngineNumber) {
+      // remove prvsEngineNumber if there is no more
+      const engineUsedInProductCount = await Product.find({
+        engineNumber: prvsEngineNumber,
+      }).count();
+
+      if (engineUsedInProductCount === 1) {
+        console.log("remove", prvsEngineNumber);
+        const engine = await EngineNumber.findByIdAndRemove(prvsEngineNumber);
+      }
+
+      // create engine number if newEngineNumber is not exist
+      if (mongoose.Types.ObjectId.isValid(newEngineNumber)) {
+        console.log("is valid!!!");
+        const engine = await EngineNumber?.findById(newEngineNumber);
+        if (engine) productBody.engineNumber = engine._id;
+      } else {
+        console.log("not valid", newEngineNumber);
+        const engine = await new EngineNumber({ title: newEngineNumber });
+        await engine.save();
+        productBody.engineNumber = engine._id;
+      }
+    }
 
     const product = await Product.findByIdAndUpdate(
       req.params.id,
-      {
-        ...req.body,
-        category: req?.body?.categoryId,
-        brand: req.body.brandId,
-      },
+      productBody,
       { new: true }
     ).populate("brand");
 
     // --------------------- Removing Engine number
-    const engineUsedInProductCount = await Product.find({engineNumber: product?.engineNumber}).count()
-    if(engineUsedInProductCount < 1) {
-      const engine = await EngineNumber.findByIdAndRemove(req?.body?.engineNumber)
+    const engineUsedInProductCount = await Product.find({
+      engineNumber: product?.engineNumber,
+    }).count();
+    if (engineUsedInProductCount < 1) {
+      const engine = await EngineNumber.findByIdAndRemove(
+        req?.body?.engineNumber
+      );
     }
 
     // const product = await Product.findById(req.params.id)
@@ -210,9 +244,11 @@ router.delete("/:id", [auth, admin], async (req: any, res: any) => {
   if (!product) return res.status(404).send("Product not found");
 
   // --------------------- Removing Engine number
-  const engineUsedInProductCount = await Product.find({engineNumber: product.engineNumber}).count()
-  if(engineUsedInProductCount < 1) {
-    const engine = await EngineNumber.findByIdAndRemove(product.engineNumber)
+  const engineUsedInProductCount = await Product.find({
+    engineNumber: product.engineNumber,
+  }).count();
+  if (engineUsedInProductCount < 1) {
+    const engine = await EngineNumber.findByIdAndRemove(product.engineNumber);
   }
 
   // // --------------------- Removing images

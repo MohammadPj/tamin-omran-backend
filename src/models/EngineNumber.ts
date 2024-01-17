@@ -8,7 +8,7 @@ export interface IEngineNumber extends Document{
 }
 
 const engineNumberSchema = new Schema<IEngineNumber>({
-  title: { type: String, minLength: 3, maxLength: 25 },
+  title: { type: String, minLength: 1, maxLength: 25 },
 }, {timestamps: true});
 
 const EngineNumber = mongoose.model<IEngineNumber>("EngineNumber", engineNumberSchema);
